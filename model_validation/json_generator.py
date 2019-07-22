@@ -3,33 +3,29 @@ import json
 import numpy as np
 import csv
 
-class JsonStringTokenGenerator:
+path = './encode_results'
+features_csv_path = './train_embs.npy'
+
+
+class JsonStringTokenGenerator(object):
 
     def __init__(self, encoded_string_tokens_list, train_embs, train_labels, image_names):
-        
         self.encoded_string_tokens_list = encoded_string_tokens_list
         self.train_embs = train_embs
-        self.train_labels = train_labels
         self.image_names = image_names
+        self.train_labels = train_labels
 
-
-    def gen_json():
-        return {
-
-        }
-
-
-    def generate_json_string_tokens_list(self):
-
+    def generate_json_string_tokens_list(self):  #### generate json for indexing to elastic
+                                                         #### search
         json_string_tokens_list = []
         for i in range(len(self.encoded_string_tokens_list)):
             # id = i + 1
             json_string_token = {
                 'label': self.train_labels[i],
                 'image_name': self.image_names[i],
-                'image_url': 'empty',
-                'embedding_vector': self.train_embs[i],
-                'string_token': self.encoded_string_tokens_list[i]
+                'url': 'empty',
+                'embed_vector': self.train_embs[i],
+                'string_token': self.encoded_string_tokens_list[i],
             }
 
             json_string_tokens_list.append(json_string_token)
@@ -50,10 +46,7 @@ def get_list_directory(path): ## get list of directory containing encoded string
 # print(directory)
 
 
-def get_string_tokens_list(directory):
-    """ Get encoded string tokens from csv files.
-    """
-
+def get_string_tokens_list(directory): ## get encoded string tokens from csv files ##
     string_tokens_paths = list()
 
     for root, dirs, files in os.walk(directory, topdown=False):
@@ -99,17 +92,13 @@ def save_json_string_tokens(directory, json_string_tokens_list):
 
     combination_name = directory.split('/')[-1]
     # print(combination_name)
-    if not os.path.exists(directory+'/'+combination_name+'.json'):
-        with open(directory+'/'+combination_name+'.json', 'w') as f:
-            json.dump(json_string_tokens_list, f)
-            f.close()
+    # if not os.path.exists(directory+'/'+combination_name+'.json'):
+    with open(directory+'/'+combination_name+'.json', 'w') as f:
+        json.dump(json_string_tokens_list, f)
+        f.close()
 
 
-def main():
-    
-    path = './encode_results'
-    features_csv_path = './train_embs.npy'
-    
+def json_generate_main():
     directory_list = get_list_directory(path)
     for directory in directory_list:
 
@@ -122,10 +111,10 @@ def main():
         train_embs = get_image_fetures(features_csv_path)
         # print(len(train_embs))
 
-        image_id_path = './vn_celeb_face_recognition/train.csv'
-        train_labels = get_image_id(image_id_path)
+        image_id_path = '../vn_celeb_face_recognition/train.csv'
+        image_names, train_labels = get_metadata(image_id_path)
 
-        json_string_tokens_generator = JsonStringTokenGenerator(encoded_string_tokens, train_embs, train_labels)
+        json_string_tokens_generator = JsonStringTokenGenerator(encoded_string_tokens, train_embs, train_labels, image_names)
         json_string_tokens_list = json_string_tokens_generator.generate_json_string_tokens_list()
         # print(json_string_tokens_list)
 
@@ -137,4 +126,8 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    json_generate_main()
+
+
+
+
