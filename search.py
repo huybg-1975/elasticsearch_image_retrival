@@ -12,6 +12,10 @@ import sys
 def search(query_vector, ES_client):
 	""" Query vectors in database for similarity with `query_vector`
 
+	Params:
+	-------
+	query_vector: 
+
 	* Note: Now, we just support for querying only one face at time.
 	"""
 
@@ -109,7 +113,7 @@ def logger_config(level):
 
 def main():
 
-	logger_config(level=logging.WARNING)
+	logger_config(level=logging.DEBUG)
 
 	# Elasticsearch client.
 	host = "localhost"
@@ -119,6 +123,7 @@ def main():
 	# Query vector for testing purpose.
 	model_folder_path = "hyperparams_training_data/"
 	embedding_vectors = np.load(model_folder_path + "train_embs.npy")
+	logging.debug(embedding_vectors[0].shape)
 
 	# Get i-th Embedding vector for searching.
 	i = 1

@@ -5,4 +5,4 @@ def update(vector, str_tokens):
 	port = 9200
 	es = ES_Connector.connect(host, port)
 
-	
+	# .....
